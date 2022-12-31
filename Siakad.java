@@ -22,7 +22,7 @@ public class Siakad {
     // FITUR MENAMPILKAN DATA
     public static void tampilData(){
         int i=0;
-        System.out.println("Berikut Data Anda");        
+        System.out.println("Berikut Data Mahasiswa");        
         System.out.println("|             Nim |            Nama |");
         while(i<jumlahData){
             System.out.printf("| %15s | %15s |\n", mahasiswa[i].getNim(), mahasiswa[i].getNama());
@@ -124,7 +124,7 @@ public class Siakad {
     public static int partition(Mahasiswa[] arr, int low, int high) {
         int p = low, j;
         for(j=low+1; j<=high; j++){
-            if(arr[j].getNim().compareTo(arr[low].getNim())<=1){
+            if(arr[j].getNim().compareTo(arr[low].getNim())<=-1){
                 swap(arr, ++p, j);
             }
         }
@@ -133,9 +133,9 @@ public class Siakad {
     }
 
     static void swap(Mahasiswa[] arr, int low, int pivot){
-        Mahasiswa tmp = arr[low];
+        Mahasiswa temp = arr[low];
         arr[low] = arr[pivot];
-        arr[pivot] = tmp;
+        arr[pivot] = temp;
     }
 
     // SHELLSORT
@@ -161,7 +161,7 @@ public class Siakad {
         System.out.print("Pilih algoritma = ");
         int algo = inp.nextInt();
         if (algo == 1 || algo == 2){
-            System.out.print("Tuliskan NIM/nama yang ingin dicari = ");
+            System.out.print("Tuliskan NIM yang ingin dicari = ");
             String search = inp.next();
             int id = -1;
             switch (algo) {
@@ -187,7 +187,7 @@ public class Siakad {
     // LINEAR SEARCH
     public static int linearSearch(String search){
         for (int i=0; i<jumlahData; i++){
-            if((mahasiswa[i].getNim().compareTo(search)==0) || (mahasiswa[i].getNama().compareTo(search)==0)){
+            if(mahasiswa[i].getNim().compareTo(search)==0){
                 return i;
             }
         }
@@ -220,6 +220,7 @@ public class Siakad {
             System.out.println("Data tidak ditemukan");
         }
         else {
+            System.out.println("|             Nim |            Nama |");
             System.out.printf("| %15s | %15s |\n", mahasiswa[index].getNim(), mahasiswa[index].getNama());
             System.out.print("Apakah anda ingin mengubah data di atas? (y/n) = ");
             char konfirm = inp.next().charAt(0);
@@ -239,14 +240,80 @@ public class Siakad {
 
     // HAPUS DATA
     public static void hapusData(){
-        
+        System.out.print("Tuliskan NIM data yang ingin dihapus = ");
+        String data = inp.next();
+        int index =-1;
+
+        for(int i=0; i<jumlahData; i++){
+            if(mahasiswa[i].getNim().compareTo(data)==0){
+                index = i;
+                System.out.println("|             Nim |            Nama |");
+                System.out.printf("| %15s | %15s |\n", mahasiswa[index].getNim(), mahasiswa[index].getNama());
+                System.out.print("Apakah anda ingin menghapus data di atas?(y/n) = ");
+                char konfirm = inp.next().charAt(0);
+                if(konfirm == 'y' || konfirm == 'Y'){
+                    delete(index);
+                }
+            }
+        }
+
+        if(index ==-1){
+            System.out.println("Data Tidak ditemukan");
+        }
+        else{
+            System.out.println("Data berhasil dihapus");
+            tampilData();
+        }
+    }
+
+    public static void delete(int index){ 
+        if(jumlahData == 1){
+            mahasiswa[index] = null;
+            jumlahData = jumlahData-1;
+        }
+        for(int i=index+1; i<jumlahData; i++){
+            mahasiswa[i-1] = mahasiswa[i];
+            if(i == jumlahData-1){
+                mahasiswa[i] = null;
+                jumlahData = jumlahData-1;
+            }
+        }
+    }
+
+    public static void uas(){
+        if(jumlahData == 0){
+            System.out.println("Tidak ada Data");
+        }
+        else{
+            int jarak = jumlahData;
+            int susut = 13;
+            int urut = 0;
+
+            while(urut == 0){
+                jarak = (jarak*10)/susut;
+                if(jarak <=1){
+                    jarak = 1;
+                    urut = 1;
+                }
+                for(int i=0; i+jarak<jumlahData; i++){
+                    if(mahasiswa[i].getNim().compareTo(mahasiswa[i+jarak].getNim())>0){
+                        Mahasiswa temp = mahasiswa[i];
+                        mahasiswa[i] =  mahasiswa[i+jarak];
+                        mahasiswa[i+jarak] = temp;
+                        urut = 0;
+                    }
+                }
+            }
+            System.out.println("Data telah diurutkan. Silakan tampilkan data");
+            
+        }
     }
 
     // MAIN MENU
     public static void main(String[]args){
         int menu;
         do{
-            System.out.println("\nMenu SIAKAD\n1. Tambah Data\n2. Lihat Data\n3. Urutkan Data\n4. Cari Data \n5. Edit Data \n6. Hapus Data \n7. Keluar");
+            System.out.println("\nMenu SIAKAD\n1. Tambah Data\n2. Lihat Data\n3. Urutkan Data\n4. Cari Data \n5. Edit Data \n6. Hapus Data \n7. UAS \n8. Keluar");
             System.out.print("Pilihan Menu : ");
             menu = inp.nextInt();
 
@@ -256,10 +323,11 @@ public class Siakad {
                 case 3 : urutkanData(); break;
                 case 4 : cariData(); break;
                 case 5 : editData(); break;
-                // case 6 : hapusData(); break;
-                case 7 : System.out.print("Terima Kasih");
+                case 6 : hapusData(); break;
+                case 7 : uas(); break;
+                case 8 : System.out.print("Terima Kasih");
             }
-        } while (menu != 7);
+        } while (menu != 8);
     }
     
 }
